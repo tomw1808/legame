@@ -1,0 +1,20 @@
+var Artifact = artifacts.require("Layercake");
+
+module.exports = async function(deployer) {
+ deployer.deploy(
+  Artifact, //Artifact
+   [artifacts.require("Dough").address, artifacts.require("Sugar").address, artifacts.require("Cherry").address], //required tokens
+   [2,5,4], //required token-amounts,
+   "Layer Cake Donut", //name
+   "Cake Master for Bakery", //description
+   5*60*60, //seconds to collect the item until it gets bad (default=2 hours)
+   0, //price in Wei per token,
+   artifacts.require("GameCurrency").address, //address of the currency
+   10, //upon collection this amount of game currency will be produced
+   [1,5,20,100,500], //price of "GameCurrency" for upgrading
+   [1,3,10,20,100], //amount of collection items per factory level
+   [30,60,2*60,5*60,30*60] //time for collection
+   ).then(ContractDeployed => {
+      return artifacts.require("GameCurrency").deployed().then((instance) => { return instance.allowContractToModifyBalance(ContractDeployed.address)});
+   });
+};
